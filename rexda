@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebGL Example</title>
     <style>
+        /* Genel sayfa stili */
         body, html {
             margin: 0;
             padding: 0;
             background-color: #151912;
             overflow-x: hidden;
-        }
-
-        .content {
-            width: 100vw;
             font-family: 'Times New Roman', serif;
         }
 
+        /* İçerik stili */
+        .content {
+            width: 100vw;
+        }
+
+        /* Bölüm stili */
         .section {
             width: 100%;
             height: 100vh;
@@ -31,10 +34,20 @@
             width: 90%;
         }
 
+        /* Farklı bölümlerin boyutlandırması */
         .section:nth-child(1) {
             font-size: 20vh;
         }
 
+        .section:nth-child(2) {
+            font-size: 10vh;
+        }
+
+        .section:nth-child(3) {
+            font-size: 8vh;
+        }
+
+        /* Mobil cihazlar için uyarlamalar */
         @media (max-width: 600px) {
             .section:nth-child(1) {
                 font-size: 25vw;
@@ -47,22 +60,6 @@
             }
         }
 
-        .section:nth-child(2) {
-            font-size: 10vh;
-        }
-
-        .section:nth-child(3) {
-            font-size: 8vh;
-        }
-
-        .section:nth-child(2) > div {
-            max-width: 800px;
-        }
-
-        .section:nth-child(3) > div {
-            max-width: 900px;
-        }
-
         @media (max-width: 750px) {
             .section:nth-child(2),
             .section:nth-child(3) {
@@ -70,46 +67,46 @@
             }
         }
 
+        /* Link stili */
         .section:nth-child(3) a {
             padding: 0 .3em;
-        }
-
-        canvas#neuro {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            pointer-events: none;
-            opacity: .95;
         }
 
         a {
             display: inline-block;
             text-decoration: none;
             color: inherit;
-            font-weight: inherit;
-            font-style: inherit;
         }
 
         a:hover {
-            font-weight: inherit;
-            text-decoration: none;
             color: rgb(160, 160, 255);
         }
 
         a:active {
             color: rgb(160, 255, 255);
         }
+
+        /* WebGL canvas stili */
+        canvas#neuro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: .95;
+        }
     </style>
 </head>
 <body>
+    <!-- İçerik Bölümleri -->
     <div class="content">
         <div class="section">
-            <div>FATİH MARKA</div>
+            <div>sinanaexp</div>
         </div>
         <div class="section">
             <div>
-                web developer <a href="https://www.instagram.com/fatihhsadak?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank">FATİH SADAK</a>
+                web developer <a href="https://sinanaexp.weebly.com/" target="_blank">sinan media</a>
             </div>
         </div>
         <div class="section">
@@ -117,23 +114,23 @@
         </div>
     </div>
 
+    <!-- WebGL Canvas -->
     <canvas id="neuro"></canvas>
 
-    <script type="x-shader/x-fragment" id="vertShader">
+    <!-- Vertex Shader -->
+    <script id="vertShader" type="x-shader/x-fragment">
         precision mediump float;
-
         varying vec2 vUv;
         attribute vec2 a_position;
-
         void main() {
             vUv = .5 * (a_position + 1.);
             gl_Position = vec4(a_position, 0.0, 1.0);
         }
     </script>
 
-    <script type="x-shader/x-fragment" id="fragShader">
+    <!-- Fragment Shader -->
+    <script id="fragShader" type="x-shader/x-fragment">
         precision mediump float;
-
         varying vec2 vUv;
         uniform float u_time;
         uniform float u_ratio;
@@ -187,8 +184,8 @@
         }
     </script>
 
+    <!-- JavaScript ve WebGL Kodları -->
     <script>
-        const containerEl = document.querySelector(".container");
         const canvasEl = document.querySelector("canvas#neuro");
         const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
 
@@ -203,12 +200,11 @@
         const gl = initShader();
 
         setupEvents();
-
         resizeCanvas();
         window.addEventListener("resize", resizeCanvas);
-
         render();
 
+        // Shader'ı başlatan fonksiyon
         function initShader() {
             const vsSource = document.getElementById("vertShader").innerHTML;
             const fsSource = document.getElementById("fragShader").innerHTML;
@@ -216,7 +212,8 @@
             const gl = canvasEl.getContext("webgl") || canvasEl.getContext("experimental-webgl");
 
             if (!gl) {
-                alert("WebGL is not supported by your browser.");
+                alert("WebGL tarayıcınız tarafından desteklenmiyor.");
+                return;
             }
 
             function createShader(gl, sourceCode, type) {
@@ -225,7 +222,7 @@
                 gl.compileShader(shader);
 
                 if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                    console.error("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));
+                    console.error("Shader derlemesi sırasında bir hata oluştu: " + gl.getShaderInfoLog(shader));
                     gl.deleteShader(shader);
                     return null;
                 }
@@ -243,7 +240,7 @@
                 gl.linkProgram(program);
 
                 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                    console.error("Unable to initialize the shader program: " + gl.getProgramInfoLog(program));
+                    console.error("Shader programı başlatılamadı: " + gl.getProgramInfoLog(program));
                     return null;
                 }
 
@@ -273,13 +270,13 @@
 
             const positionLocation = gl.getAttribLocation(shaderProgram, "a_position");
             gl.enableVertexAttribArray(positionLocation);
-
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
             return gl;
         }
 
+        // Render fonksiyonu
         function render() {
             const currentTime = performance.now();
 
@@ -287,36 +284,4 @@
             pointer.y += (pointer.tY - pointer.y) * .5;
 
             gl.uniform1f(uniforms.u_time, currentTime);
-            gl.uniform2f(uniforms.u_pointer_position, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight);
-            gl.uniform1f(uniforms.u_scroll_progress, window["pageYOffset"] / (2 * window.innerHeight));
-
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            requestAnimationFrame(render);
-        }
-
-        function resizeCanvas() {
-            canvasEl.width = window.innerWidth * devicePixelRatio;
-            canvasEl.height = window.innerHeight * devicePixelRatio;
-            gl.uniform1f(uniforms.u_ratio, canvasEl.width / canvasEl.height);
-            gl.viewport(0, 0, canvasEl.width, canvasEl.height);
-        }
-
-        function setupEvents() {
-            window.addEventListener("pointermove", e => {
-                updateMousePosition(e.clientX, e.clientY);
-            });
-            window.addEventListener("touchmove", e => {
-                updateMousePosition(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
-            });
-            window.addEventListener("click", e => {
-                updateMousePosition(e.clientX, e.clientY);
-            });
-
-            function updateMousePosition(eX, eY) {
-                pointer.tX = eX;
-                pointer.tY = eY;
-            }
-        }
-    </script>
-</body>
-</html>
+            gl.uniform2
